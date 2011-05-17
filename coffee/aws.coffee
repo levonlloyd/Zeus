@@ -46,21 +46,26 @@ getElasticIPs = (handleSuccess, handleFailure) ->
 getInstances = (handleSuccess, handleFailure) ->
   instanceSuccess = (data, status, jqXHR) ->
     instances = []
-    $(data).find('instancesSet').children().each ->
-      instance = {}
-      instance.instanceId = $(this).find('instanceId').text()
-      instance.secGroup = $(this).find('groupSet').text()
-      instance.az = $(this).find('placement').text()
-      instance.dnsName = $(this).find('dnsName').text()
-      instance.ami = $(this).find('imageId').text()
-      instance.architecture = $(this).find('architecture').text()
-      instance.state = $(this).find('state').text()
-      instance.launchTime = $(this).find('launchTime').text()
-      instance.privateDnsName = $(this).find('privateDnsName').text()
-      instance.platform = $(this).find('platform').text()
-      instance.keyName = $(this).find('keyName').text()
-      instance.rootDeviceType =  $(this).find('rootDeviceType').text()
-      instances.push instance
+    $(data).find('reservationSet').children().each ->
+      groups = []
+      $(this).find('groupSet').children().each ->
+        groups.push($(this).find('groupId').text())
+      $(this).find('instancesSet').children().each ->
+        instance = {}
+        instance.instanceId = $(this).find('instanceId').text()
+        instance.secGroup = groups.join(', ')
+        instance.az = $(this).find('placement').find('availabilityZone').text()
+        instance.dnsName = $(this).find('dnsName').text()
+        instance.ami = $(this).find('imageId').text()
+        instance.architecture = $(this).find('architecture').text()
+        instance.state = $(this).find('instanceState').find('name').text()
+        instance.launchTime = $(this).find('launchTime').text()
+        instance.privateDnsName = $(this).find('privateDnsName').text()
+        instance.platform = $(this).find('platform').text()
+        instance.keyName = $(this).find('keyName').text()
+        instance.rootDeviceType =  $(this).find('rootDeviceType').text()
+        instance.tags = []
+        instances.push instance
     handleSuccess instances
 
   params = []
@@ -76,6 +81,7 @@ getInstances = (handleSuccess, handleFailure) ->
 getImages = (handleSuccess, handleFailure) ->
   imageSuccess = (data, status, jqXHR) ->
     images = []
+    console.log(data)
     $(data).find('imagesSet').children().each ->
       image = {}
       image.imageId = $(this).find('imageId').text()

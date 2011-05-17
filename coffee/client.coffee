@@ -73,6 +73,21 @@ showImagesDialog = (rowNum) ->
 
 showInstancesDialog = (rowNum) ->
   row = instancesData[rowNum - 1]
+  $('.instance-reset').empty()
+  $('#instanced-architecture').append(row.architecture)
+  $('#instanced-id').append(row.instanceId)
+  $('#instanced-location').append(row.az)
+  $('#instanced-ami').append(row.ami)
+  $('#instanced-state').append(row.state)
+  $('#instanced-launchTime').append(row.launchTime)
+  $('#instanced-publicDNS').append(row.dnsName)
+  $('#instanced-keyName').append(row.keyName)
+  $('#instanced-platform').append(row.platform)
+  $('#instanced-privateDNS').append(row.privateDnsName)
+  $('#instanced-rootDevice').append(row.rootDeviceType)
+  $('#instanced-secGroup').append(row.secGroup)
+  $('#instanced-tags').append(row.tags.join(','))
+
   consoleOutputHandler = (content) ->
     $('#instanced-co').empty().append("<textarea cols=\"100\" rows=\"20\">" + content + "</textarea>")
   getConsoleOutput row.instanceId, consoleOutputHandler, handleFailure

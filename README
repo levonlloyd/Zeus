@@ -6,6 +6,8 @@ Zeus is a Chrome app for controlling Amazon AWS.  It's properties are
 
 3) It uses jQuery.  This should give it a more attractive User Experience.
 
+4) It has a javascript API for AWS that (will ultimately) stand on its own.
+
 
 In order to build it,
 1) run Cake build in the top level.  This will generate app.js in extension/lib/js
