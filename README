@@ -1,0 +1,16 @@
+Zeus is a Chrome app for controlling Amazon AWS.  It's properties are
+
+1) It is a replacement for Elasticfox, but aimed at Chrome instead of Firefox
+
+2) It is written in coffeescript.  This should make development and maintainance must easier.
+
+3) It uses jQuery.  This should give it a more attractive User Experience.
+
+
+In order to build it,
+1) run Cake build in the top level.  This will generate app.js in extension/lib/js
+2) Load an unpackaged extension in Chrome.
+
+
+
+

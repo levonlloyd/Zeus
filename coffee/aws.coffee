@@ -29,17 +29,15 @@ getAvailabilityZones = (handleSuccess, handleFailure) ->
     queryEC2 "DescribeAvailabilityZones", "", accessCode, secretKey, zoneSuccess, handleFailure
   getAWSCreds credentialsCallback
 
-getElasticIPs = (handleFailure) ->
+getElasticIPs = (handleSuccess, handleFailure) ->
   elasticIPSuccess = (data, status, jqXHR) ->
     ips = []
     $(data).find('item').each ->
-      console.log($(this).find('publicip'))
       ip = {}
-      ip.ip = $(this).find('publicip').text()
-      ip.instance = $(this).find('instanceid').text()
+      ip.ip = $(this).find('publicIp').text()
+      ip.instance = $(this).find('instanceId').text()
       ips.push ip
-    console.log(data)
-    console.log(ips)
+    handleSuccess ips
 
   credentialsCallback = (accessCode, secretKey) ->
     queryEC2 "DescribeAddresses", [], accessCode, secretKey, elasticIPSuccess, handleFailure

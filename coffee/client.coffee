@@ -3,8 +3,10 @@ showingInstances = false
 showingImages = false
 showingKeyPairs = false
 showingZones = false
+showingElasticIPs = false
 imagesData = []
 instancesData = []
+elasticIPData = []
 
 setupInstances = () ->
     $('#instances').jqGrid
@@ -142,6 +144,27 @@ showKeyPairs = (data) ->
     $("#key-pairs").jqGrid('addRowData',i+1,dataPoint) for dataPoint,i in data
   showingKeyPairs = true
 
+setupElasticIPs = () ->
+  $('#elastic-ips').jqGrid
+    datatype: 'local'
+    height: 200
+    width: 1200
+    colNames: [
+      'IP Address'
+      'Instance ID'
+    ],
+    colModel: [
+      {name:'ip',index:'ip',width:200}
+      {name:'instance',index:'instance',width:200}
+    ]
+    multiselect: false
+    caption:'Elastic IPs'
+
+showElasticIPs = (data) ->
+  if not showingElasticIPs
+    $('#elastic-ips').jqGrid('addRowData', i+1, dataPoint) for dataPoint, i in data
+    showingElasticIPs = true
+
 setupZones = () ->
   $('#availability-zones').jqGrid
     datatype: 'local'
@@ -189,8 +212,8 @@ $(document).ready () ->
   setupInstances()
   setupImages()
   setupKeyPairs()
+  setupElasticIPs()
   setupZones()
-  getElasticIPs handleFailure
   acccessCode = localStorage.getItem "accessCode"
   secretKey = localStorage.getItem "secretKey"
   $("#tabs").tabs
@@ -202,6 +225,7 @@ $(document).ready () ->
           $("#instances-show").show()
           getImages showImages, handleFailure
         when 2 then getKeyPairs showKeyPairs, handleFailure
+        when 4 then getElasticIPs showElasticIPs, handleFailure
         when 7 then getAvailabilityZones showZones, handleFailure
   saveButton = 
     text: "Save"
@@ -213,7 +237,8 @@ $(document).ready () ->
     width: 500
     buttons: [ saveButton ]
     close: () ->
-      allFields.val ""
+      $('#access').val ""
+      $('#secret').val ""
 
   $("#image-dialog").dialog
     autoOpen: false

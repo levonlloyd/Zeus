@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<title>Cool Extension for AWS in chrome!!</title>
+<title>Zeus</title>
 
 <link type="text/css" href="lib/css/ui-lightness/jquery-ui-1.8.12.custom.css" rel="stylesheet" />	
 <link type="text/css" href="lib/css/demo_page.css" rel="stylesheet" />	
@@ -48,7 +48,8 @@
     Unimplemented
   </div>
   <div id="tabs-5">
-    Unimplemented
+    <table id="elastic-ips">
+    </table>
   </div>
   <div id="tabs-6">
     Unimplemented
@@ -66,10 +67,14 @@
 <div id="credentials-dialog" title="Enter your AWS Credentials">
   <form>
     <fieldset>
+      <div>
       <label for="access">AWS Access Key</label>
       <input type="text" name="access" id="access" class="text ui-widget-content ui-corner-all" />
-      <label for="secret">AWS Secret Key</label>
-      <input type="text" name="secret" id="secret" class="text ui-widget-content ui-corner-all" />
+      </div>
+      <div>
+        <label for="secret">AWS Secret Key</label>
+        <input type="text" name="secret" id="secret" class="text ui-widget-content ui-corner-all" />
+      </div>
     </fieldset>
   </form>
 </div>
