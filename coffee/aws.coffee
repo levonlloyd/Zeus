@@ -81,7 +81,6 @@ getInstances = (handleSuccess, handleFailure) ->
 getImages = (handleSuccess, handleFailure) ->
   imageSuccess = (data, status, jqXHR) ->
     images = []
-    console.log(data)
     $(data).find('imagesSet').children().each ->
       image = {}
       image.imageId = $(this).find('imageId').text()
@@ -136,6 +135,37 @@ getConsoleOutput = (instance, handleSuccess, handleFailure) ->
 
   credentialsCallback = (accessCode, secretKey) ->
     queryEC2 "GetConsoleOutput", params, accessCode, secretKey, consoleOutputSuccess, handleFailure
+  getAWSCreds credentialsCallback
+
+getSecurityGroups = (handleSuccess, handleFailure) ->
+  secGroupsSuccess = (data, status, jqXHR) ->
+    groups = []
+    $(data).find('securityGroupInfo').children().each ->
+      group = {}
+      $(this).children('groupName').each ->
+        group.name = $(this).text()
+      group.description = $(this).find('groupDescription').text()
+      permissions = []
+      $(this).find('ipPermissions').children().each ->
+        permission = {}
+        permission.protocol = $(this).find('ipProtocol').text()
+        permission.fromPort = $(this).find('fromPort').text()
+        permission.toPort = $(this).find('toPort').text()
+        allowedGroups = []
+        $(this).find('groups').children().each ->
+          allowedGroups.push $(this).find('groupName').text()
+        permission.allowedGroups = allowedGroups
+        ipRanges = []
+        $(this).find('ipRanges').children().each ->
+          ipRanges.push $(this).find('cidrIp').text()
+        permission.ipRanges = ipRanges
+        permissions.push permission
+      group.permissions = permissions
+      groups.push group
+    handleSuccess(groups)
+
+  credentialsCallback = (accessCode, secretKey) ->
+    queryEC2 "DescribeSecurityGroups", [], accessCode, secretKey, secGroupsSuccess, handleFailure
   getAWSCreds credentialsCallback
 
 # Fetch AWS credentials from local storage.  If not present, prompt user
