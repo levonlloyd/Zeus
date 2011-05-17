@@ -1,10 +1,5 @@
-1) Don't query AWS unless you have credentials.  Bring up dialog if not
-2) Properly handle tables on re-enter of a tab
-3) Move to EXT js from Jquery
-4) DescribeImages
-5) DescribeSnapshots
-6) DescribeSpotHistory
-7) DescribeVolumes
-8) DescribeSecurityGroups
-9) DescribeAddresses
-10) DescribeBundleTasks
+1) DescribeSnapshots
+2) DescribeSpotHistory
+3) DescribeVolumes
+4) DescribeSecurityGroups
+5) DescribeBundleTasks
