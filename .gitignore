@@ -1,0 +1,6 @@
+# the built file
+extension/lib/js/app.js
+
+# vim temp files
+*.swp
+*.swo

@@ -1,0 +1,193 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Cool Extension for AWS in chrome!!</title>
+
+<link type="text/css" href="lib/css/ui-lightness/jquery-ui-1.8.12.custom.css" rel="stylesheet" />	
+<link type="text/css" href="lib/css/demo_page.css" rel="stylesheet" />	
+<link type="text/css" href="lib/css/demo_table.css" rel="stylesheet" />	
+<link rel="stylesheet" type="text/css" media="screen" href="lib/css/ui.jqgrid.css" />
+<script src="lib/js/jquery-1.6.js"></script>
+<script src="lib/js/jquery-ui-1.8.12.custom.min.js"></script>
+<script src="lib/js/grid.locale-en.js" type="text/javascript"></script>
+<script src="lib/js/jquery.jqGrid.min.js" type="text/javascript"></script>
+<script src="lib/js/jquery.dataTables.js"></script>
+<script src="lib/js/crypto-sha1.js"></script>
+<script src="lib/js/hmac-min.js"></script>
+<script src="lib/js/app.js"></script>
+
+</head>
+
+<body>
+
+<!-- jQuery Tab widget -->
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-1">Instances</a></li>
+    <li><a href="#tabs-2">Images</a></li>
+    <li><a href="#tabs-3">Key Pairs</a></li>
+    <li><a href="#tabs-4">Security Groups</a></li>
+    <li><a href="#tabs-5">Elastic IPs</a></li>
+    <li><a href="#tabs-6">Volumes and Snapshots</a></li>
+    <li><a href="#tabs-7">Bundle Tasks</a></li>
+    <li><a href="#tabs-8">Availability Zones</a></li>
+  </ul>
+  <div id="tabs-1">
+    <table id="instances">
+    </table>
+  </div>
+  <div id="tabs-2">
+    <table id="images">
+    </table>
+  </div>
+  <div id="tabs-3">
+    <table id="key-pairs">
+    </table>
+  </div>
+  <div id="tabs-4">
+    Unimplemented
+  </div>
+  <div id="tabs-5">
+    Unimplemented
+  </div>
+  <div id="tabs-6">
+    Unimplemented
+  </div>
+  <div id="tabs-7">
+    Unimplemented
+  </div>
+  <div id="tabs-8">
+    <table id="availability-zones">
+    </table>
+  </div>
+</div>
+
+<!-- jQuery Dialog widget  -->
+<div id="credentials-dialog" title="Enter your AWS Credentials">
+  <form>
+    <fieldset>
+      <label for="access">AWS Access Key</label>
+      <input type="text" name="access" id="access" class="text ui-widget-content ui-corner-all" />
+      <label for="secret">AWS Secret Key</label>
+      <input type="text" name="secret" id="secret" class="text ui-widget-content ui-corner-all" />
+    </fieldset>
+  </form>
+</div>
+
+<!-- Dialog for instances -->
+<div id="instance-dialog">
+  <div id="instance-accordion">
+    <h3><a href="#">Instance Details</a></h3>
+    <div>Unimplemented</div>
+    <h3><a href="#">Add Tag</a></h3>
+    <div>Unimplemented</div>
+    <h3><a href="#">Launch More Like This</a></h3>
+    <div>Unimplemented</div>
+    <h3><a href="#">Associate Elastic IP</a></h3>
+    <div>Unimplemented</div>
+    <h3><a href="#">Attach a Volume</a></h3>
+    <div>Unimplemented</div>
+    <h3><a href="#">Create an Image</a></h3>
+    <div>Unimplemented</div>
+    <h3><a href="#">Change State</a></h3>
+    <div>Unimplemented</div>
+    <h3><a href="#">Bundle</a></h3>
+    <div>Unimplemented</div>
+    <h3><a href="#">Show Console Output</a></h3>
+    <div id="instanced-co"></div>
+    <h3><a href="#">Get Admin Password</a></h3>
+    <div>Unimplemented</div>
+    <h3><a href="#">Copy Instance ID to Clipboard</a></h3>
+    <div>Unimplemented</div>
+    <h3><a href="#">Connect to Instance</a></h3>
+    <div>Unimplemented</div>
+  </div>
+</div>
+
+<!-- Dialog for images -->
+<div id="image-dialog">
+  <div id="image-accordion">
+    <h3><a href="#">Image Details</a></h3>
+    <div id="image-detail">
+      <table>
+        <tr>
+          <td>Architecture</td>
+          <td id="imaged-architecture" class="image-reset"></td>
+        </tr>
+        <tr>
+          <td>Image ID</td>
+          <td id="imaged-id" class="image-reset"></td>
+        </tr>
+        <tr>
+          <td>Manifest</td>
+          <td id="imaged-location" class="image-reset"></td>
+        </tr>
+        <tr>
+          <td>Owner</td>
+          <td id="imaged-owner" class="image-reset"></td>
+        </tr>
+        <tr>
+          <td>State</td>
+          <td id="imaged-state" class="image-reset"></td>
+        </tr>
+        <tr>
+          <td>Type</td>
+          <td id="imaged-type" class="image-reset"></td>
+        </tr>
+        <tr>
+          <td>Public?</td>
+          <td id="imaged-public" class="image-reset"></td>
+        </tr>
+        <tr>
+          <td>Name</td>
+          <td id="imaged-name" class="image-reset"></td>
+        </tr>
+        <tr>
+          <td>Kernel ID</td>
+          <td id="imaged-kernel" class="image-reset"></td>
+        </tr>
+        <tr>
+          <td>Ram Disk ID</td>
+          <td id="imaged-ramdisk" class="image-reset"></td>
+        </tr>
+        <tr>
+          <td>Root Device Type</td>
+          <td id="imaged-rootDevice" class="image-reset"></td>
+        </tr>
+        <tr>
+          <td>Description</td>
+          <td id="imaged-description" class="image-reset"></td>
+        </tr>
+        <tr>
+          <td>Tags</td>
+          <td id="imaged-tags" class="image-reset"></td>
+        </tr>
+      </table>
+    </div>
+    <h3><a href="#">Add Tag</a></h3>
+    <div class="jqButton">
+      <form>
+        <fieldset>
+          <div>
+            <label for="key">Tag Key</label>
+            <input type="text" name="key" id="key" class="text ui-widget-content ui-corner-all" />
+          </div>
+          <div>
+            <label for="value">Tag Value</label>
+            <input type="text" name="value" id="value" class="text ui-widget-content ui-corner-all" />
+          </div>
+        </fieldset>
+        <input type="submit" value="Add Tag" />
+      </form>
+    </div>
+    <h3><a href="#">Deregister This AMI</a></h3>
+    <div>Form to terminate image.  Unimplemented</div>
+    <h3><a href="#">Launch Image</a></h3>
+    <div>Form to launch image.  Unimplemented</div>
+    <h3><a href="#">Copy ID to Clipboard</a></h3>
+    <div>Unimplemented</div>
+  </div>
+</div>
+
+</body>
+</html>

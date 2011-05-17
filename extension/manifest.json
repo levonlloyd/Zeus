@@ -1,0 +1,17 @@
+{
+  "name": "Zeus",
+  "version": "0.1",
+  "description": "Control AWS services from a chrome app.",
+  "app": {
+    "launch": {
+      "local_path": "index.html"
+    }
+  },
+  "icons": {
+    "16": "icon.png"
+  },
+  "permissions": [
+    "https://ec2.amazonaws.com/"
+  ]
+  
+}
