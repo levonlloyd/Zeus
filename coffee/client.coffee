@@ -5,6 +5,7 @@ showingKeyPairs = false
 showingZones = false
 showingElasticIPs = false
 showingSecurityGroups = false
+showingVolumes = false
 imagesData = []
 instancesData = []
 elasticIPData = []
@@ -202,6 +203,35 @@ showElasticIPs = (data) ->
     $('#elastic-ips').jqGrid('addRowData', i+1, dataPoint) for dataPoint, i in data
     showingElasticIPs = true
 
+setupVolumes = () ->
+  $('#ebs-volumes').jqGrid
+    datatype: 'local'
+    height: 200
+    width: 1200
+    colNames: [
+      'Volume ID'
+      'Size (GB)'
+      'Snapshot ID'
+      'Availability Zone'
+      'Status'
+      'Creation time'
+    ]
+    colModel: [
+      {name:'volume_id',index:'volume_id',width:200}
+      {name:'size',index:'size',width:200}
+      {name:'snapshot_id',index:'snapshot_id',width:200}
+      {name:'az',index:'az',width:200}
+      {name:'status',index:'status',width:200}
+      {name:'creation',index:'creation',width:200}
+    ]
+    multiselect: true
+    caption: "Volumes and Snapshots"
+
+showVolumes = (data) ->
+  if not showingVolumes
+    $("#ebs-volumes").jqGrid('addRowData',i+1,dataPoint) for dataPoint, i in data
+  showingVolumes = true
+
 setupZones = () ->
   $('#availability-zones').jqGrid
     datatype: 'local'
@@ -251,7 +281,24 @@ $(document).ready () ->
   setupKeyPairs()
   setupSecurityGroups()
   setupElasticIPs()
+  setupVolumes()
   setupZones()
+
+  ###
+  # Test of getting the clients ip
+  ipCallback = (data, textStatus, jqXHR) ->
+    console.log(data)
+
+  callConfig =
+    type: "GET"
+    url: "http://jsonip.appspot.com/"
+    success: ipCallback
+    failure: handleFailure
+    dataType: 'jsonp'
+
+  $.ajax callConfig
+  ###
+
   $("#tabs").tabs
     selected: 0
     show: (e, ui) ->
@@ -263,6 +310,7 @@ $(document).ready () ->
         when 2 then getKeyPairs showKeyPairs, handleFailure
         when 3 then getSecurityGroups showSecurityGroups, handleFailure
         when 4 then getElasticIPs showElasticIPs, handleFailure
+        when 5 then getVolumes showVolumes, handleFailure
         when 7 then getAvailabilityZones showZones, handleFailure
   saveButton = 
     text: "Save"

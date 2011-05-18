@@ -11,7 +11,8 @@
     "16": "icon.png"
   },
   "permissions": [
-    "https://ec2.amazonaws.com/"
+    "https://ec2.amazonaws.com/",
+    "http://jsonip.appspot.com/"
   ]
   
 }

@@ -168,6 +168,35 @@ getSecurityGroups = (handleSuccess, handleFailure) ->
     queryEC2 "DescribeSecurityGroups", [], accessCode, secretKey, secGroupsSuccess, handleFailure
   getAWSCreds credentialsCallback
 
+getVolumes = (handleSuccess, handleFailure) ->
+  volumesSuccess = (data, status, jqXHR) ->
+    volumes = []
+    $(data).find('volumeSet').children().each ->
+      volume = {}
+      volume.volume_id = $(this).find('volumeId').text()
+      volume.size = $(this).find('size').text()
+      volume.snapshot_id = $(this).find('snapshotId').text()
+      volume.az = $(this).find('availabilityZone').text()
+      volume.status = $(this).find('status').text()
+      volume.creation = $(this).find('createTime').text()
+      volume.attach_set = []
+      $(this).find('attachmentSet').children().each ->
+        attach_item = {}
+        attach_item.volume_id = $(this).find('volumeId').text()
+        attach_item.instance = $(this).find('instanceId').text()
+        attach_item.device = $(this).find('device').text()
+        attach_item.status = $(this).find('status').text()
+        attach_item.time = $(this).find('attachTime').text()
+        attach_item.dot = $(this).find('deleteOnTermination').text()
+        volume.attach_set.push attach_item
+      volumes.push volume
+    handleSuccess(volumes)
+
+  credentialsCallback = (accessCode, secretKey) ->
+    queryEC2 "DescribeVolumes", [], accessCode, secretKey, volumesSuccess, handleFailure
+  getAWSCreds credentialsCallback
+
+
 # Fetch AWS credentials from local storage.  If not present, prompt user
 # call callback with keys when you have them
 getAWSCreds = (callback) ->
