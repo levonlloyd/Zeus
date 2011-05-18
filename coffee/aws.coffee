@@ -212,7 +212,7 @@ getSnapshots = (handleSuccess, handleFailure) ->
       snapshot.size = $(this).find('volumeSize').text()
       snapshot.description = $(this).find('description').text()
       snapshots.push snapshot
-    console.log(snapshots)
+    handleSuccess(snapshots)
 
   credentialsCallback = (accessCode, secretKey) ->
     queryEC2 "DescribeSnapshots", [], accessCode, secretKey, snapshotsSuccess, handleFailure

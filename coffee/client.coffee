@@ -6,6 +6,7 @@ showingZones = false
 showingElasticIPs = false
 showingSecurityGroups = false
 showingVolumes = false
+showingSnapshots = false
 imagesData = []
 instancesData = []
 elasticIPData = []
@@ -225,12 +226,45 @@ setupVolumes = () ->
       {name:'creation',index:'creation',width:200}
     ]
     multiselect: true
-    caption: "Volumes and Snapshots"
+    caption: "Volumes"
 
 showVolumes = (data) ->
   if not showingVolumes
     $("#ebs-volumes").jqGrid('addRowData',i+1,dataPoint) for dataPoint, i in data
   showingVolumes = true
+
+setupSnapshots = () ->
+  $('#ebs-snapshots').jqGrid
+    datatype: 'local'
+    height: 200
+    width: 1200
+    colNames: [
+      'Snapshot ID'
+      'Volume ID'
+      'Status'
+      'Start Time'
+      'Progress'
+      'Owner'
+      'Size'
+      'Description'
+    ]
+    colModel: [
+      {name:'snapshot_id',index:'snapshot_id',width:200}
+      {name:'volume_id',index:'volume_id',width:200}
+      {name:'status',index:'status',width:200}
+      {name:'start_time',index:'start_time',width:200}
+      {name:'progress',index:'progress',width:200}
+      {name:'owner',index:'owner',width:200}
+      {name:'size',index:'size',width:200}
+      {name:'description',index:'description',width:200}
+    ]
+    multiselect: false
+    caption: "Snapshots"
+
+showSnapshots = (data) ->
+  if not showingSnapshots
+    $('#ebs-snapshots').jqGrid('addRowData',i+1,dataPoint) for dataPoint, i in data
+  showingSnapshots = true
 
 setupZones = () ->
   $('#availability-zones').jqGrid
@@ -282,6 +316,7 @@ $(document).ready () ->
   setupSecurityGroups()
   setupElasticIPs()
   setupVolumes()
+  setupSnapshots()
   setupZones()
 
   ###
@@ -299,8 +334,6 @@ $(document).ready () ->
   $.ajax callConfig
   ###
 
-  getSnapshots alert, handleFailure
-
   $("#tabs").tabs
     selected: 0
     show: (e, ui) ->
@@ -312,7 +345,9 @@ $(document).ready () ->
         when 2 then getKeyPairs showKeyPairs, handleFailure
         when 3 then getSecurityGroups showSecurityGroups, handleFailure
         when 4 then getElasticIPs showElasticIPs, handleFailure
-        when 5 then getVolumes showVolumes, handleFailure
+        when 5 
+          getVolumes showVolumes, handleFailure
+          getSnapshots showSnapshots, handleFailure
         when 7 then getAvailabilityZones showZones, handleFailure
   saveButton = 
     text: "Save"
