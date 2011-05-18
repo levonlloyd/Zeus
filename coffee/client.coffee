@@ -299,6 +299,8 @@ $(document).ready () ->
   $.ajax callConfig
   ###
 
+  getSnapshots alert, handleFailure
+
   $("#tabs").tabs
     selected: 0
     show: (e, ui) ->

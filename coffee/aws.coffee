@@ -173,11 +173,13 @@ getVolumes = (handleSuccess, handleFailure) ->
     volumes = []
     $(data).find('volumeSet').children().each ->
       volume = {}
-      volume.volume_id = $(this).find('volumeId').text()
+      $(this).children('volumeId').each ->
+        volume.volume_id = $(this).text()
       volume.size = $(this).find('size').text()
       volume.snapshot_id = $(this).find('snapshotId').text()
       volume.az = $(this).find('availabilityZone').text()
-      volume.status = $(this).find('status').text()
+      $(this).children('status').each ->
+        volume.status = $(this).text()
       volume.creation = $(this).find('createTime').text()
       volume.attach_set = []
       $(this).find('attachmentSet').children().each ->
@@ -194,6 +196,26 @@ getVolumes = (handleSuccess, handleFailure) ->
 
   credentialsCallback = (accessCode, secretKey) ->
     queryEC2 "DescribeVolumes", [], accessCode, secretKey, volumesSuccess, handleFailure
+  getAWSCreds credentialsCallback
+
+getSnapshots = (handleSuccess, handleFailure) ->
+  snapshotsSuccess = (data, status, jqXHR) ->
+    snapshots = []
+    $(data).find('snapshotSet').children().each ->
+      snapshot = {}
+      snapshot.snapshot_id = $(this).find('snapshotId').text()
+      snapshot.volume_id = $(this).find('volumeId').text()
+      snapshot.status = $(this).find('status').text()
+      snapshot.start_time = $(this).find('startTime').text()
+      snapshot.progress = $(this).find('progress').text()
+      snapshot.owner = $(this).find('ownerId').text()
+      snapshot.size = $(this).find('volumeSize').text()
+      snapshot.description = $(this).find('description').text()
+      snapshots.push snapshot
+    console.log(snapshots)
+
+  credentialsCallback = (accessCode, secretKey) ->
+    queryEC2 "DescribeSnapshots", [], accessCode, secretKey, snapshotsSuccess, handleFailure
   getAWSCreds credentialsCallback
 
 
