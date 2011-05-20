@@ -175,7 +175,7 @@ getVolumes = (handleSuccess, handleFailure) ->
       volume = {}
       $(this).children('volumeId').each ->
         volume.volume_id = $(this).text()
-      volume.size = $(this).find('size').text()
+      volume.size = parseInt($(this).find('size').text())
       volume.snapshot_id = $(this).find('snapshotId').text()
       volume.az = $(this).find('availabilityZone').text()
       $(this).children('status').each ->
@@ -218,6 +218,27 @@ getSnapshots = (handleSuccess, handleFailure) ->
     queryEC2 "DescribeSnapshots", [], accessCode, secretKey, snapshotsSuccess, handleFailure
   getAWSCreds credentialsCallback
 
+
+runInstances = (request, handleSuccess, handleFailure) ->
+  runInstancesSuccess = (data, status, jqXHR) ->
+    console.log(data)
+
+  params = []
+  params.push new Array("ImageId", request.ami)
+  params.push new Array("MinCount", request.min)
+  params.push new Array("MaxCount", request.max)
+  if request.type?
+    params.push new Array("InstanceType", request.type)
+  if request.key?
+    params.push new Array("KeyName", request.key)
+  if request.sec_groups?
+    params.push(new Array("SecurityGroup."+i, g)) for g,i in request.sec_groups
+  if request.az?
+    params.push new Array("Placement.AvailabilityZone", request.az)
+
+  credentialsCallback = (accessCode, secretKey) ->
+    queryEC2 "RunInstances", params, accessCode, secretKey, runInstancesSuccess, handleFailure
+  getAWSCreds credentialsCallback
 
 # Fetch AWS credentials from local storage.  If not present, prompt user
 # call callback with keys when you have them

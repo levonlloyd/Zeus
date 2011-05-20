@@ -10,6 +10,7 @@ showingSnapshots = false
 imagesData = []
 instancesData = []
 elasticIPData = []
+volumeData = []
 
 setupInstances = () ->
     $('#instances').jqGrid
@@ -73,6 +74,11 @@ showImagesDialog = (rowNum) ->
   $('#imaged-description').append(row.description)
   $('#imaged-tags').append(row.tags.join(','))
   $("#image-dialog").dialog 'open'
+
+showVolumesDialog = (rowNum) ->
+  row = volumeData[rowNum - 1]
+  $('.volume-reset').empty()
+  $("#volume-dialog").dialog 'open'
 
 showInstancesDialog = (rowNum) ->
   row = instancesData[rowNum - 1]
@@ -209,6 +215,8 @@ setupVolumes = () ->
     datatype: 'local'
     height: 200
     width: 1200
+    ondblClickRow: (rowid, rowIndex, colIndex, e) ->
+      showVolumesDialog rowid
     colNames: [
       'Volume ID'
       'Size (GB)'
@@ -219,7 +227,7 @@ setupVolumes = () ->
     ]
     colModel: [
       {name:'volume_id',index:'volume_id',width:200}
-      {name:'size',index:'size',width:200}
+      {name:'size',index:'size',width:200, align: 'right', sorttype: 'int'}
       {name:'snapshot_id',index:'snapshot_id',width:200}
       {name:'az',index:'az',width:200}
       {name:'status',index:'status',width:200}
@@ -231,6 +239,7 @@ setupVolumes = () ->
 showVolumes = (data) ->
   if not showingVolumes
     $("#ebs-volumes").jqGrid('addRowData',i+1,dataPoint) for dataPoint, i in data
+    volumeData = data
   showingVolumes = true
 
 setupSnapshots = () ->
@@ -255,7 +264,7 @@ setupSnapshots = () ->
       {name:'start_time',index:'start_time',width:200}
       {name:'progress',index:'progress',width:200}
       {name:'owner',index:'owner',width:200}
-      {name:'size',index:'size',width:200}
+      {name:'size',index:'size',width:200, sorttype: 'int'}
       {name:'description',index:'description',width:200}
     ]
     multiselect: false
@@ -309,7 +318,8 @@ openDialog = (callback) ->
 $(document).ready () ->
   $("#instances-show").hide()
   $("#images-show").hide()
-  $("input:submit", ".jqButton").button()
+  $("input:submit", ".imageTagButton").button()
+  $("input:submit", ".imageRunButton").button()
   setupInstances()
   setupImages()
   setupKeyPairs()
@@ -333,6 +343,14 @@ $(document).ready () ->
 
   $.ajax callConfig
   ###
+
+  request = {}
+  request.min = 1
+  request.max = 1
+  request.ami = 'ami-a8e21cc1'
+  request.type = 'm1.large'
+  request.sec_groups = ['GENSENT_freedonia_EBS']
+  #runInstances request, alert, handleFailure
 
   $("#tabs").tabs
     selected: 0
@@ -374,5 +392,13 @@ $(document).ready () ->
     width: 1000
     open: () ->
       $('#instance-accordion').accordion
+        autoHeight: false
+        navigation: true
+  $("#volume-dialog").dialog
+    autoOpen: false
+    modal: true
+    width: 1000
+    open: () ->
+      $('#volume-accordion').accordion
         autoHeight: false
         navigation: true
