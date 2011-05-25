@@ -240,6 +240,45 @@ runInstances = (request, handleSuccess, handleFailure) ->
     queryEC2 "RunInstances", params, accessCode, secretKey, runInstancesSuccess, handleFailure
   getAWSCreds credentialsCallback
 
+describeReservedInstances = (handleSuccess, handleFailure) ->
+  describeReservedInstancesSuccess = (data, status, jqXHR) ->
+    reservedInstances = []
+    $(data).find('reservedInstancesSet').children().each ->
+      reservedInstance = {}
+      reservedInstance.type = $(this).find('instanceType').text()
+      reservedInstance.az = $(this).find('availabilityZone').text()
+      reservedInstance.start = $(this).find('start').text()
+      reservedInstance.duration = $(this).find('duration').text()
+      reservedInstance.fixed_price = $(this).find('fixedPrice').text()
+      reservedInstance.usage_price = $(this).find('usagePrice').text()
+      reservedInstance.count = $(this).find('instanceCount').text()
+      reservedInstance.description = $(this).find('productDescription').text()
+      reservedInstance.state = $(this).find('state').text()
+      reservedInstances.push reservedInstance
+    handleSuccess(reservedInstances)
+
+  credentialsCallback = (accessCode, secretKey) ->
+    queryEC2 "DescribeReservedInstances", [], accessCode, secretKey, describeReservedInstancesSuccess, handleFailure
+  getAWSCreds credentialsCallback
+
+describeReservedInstancesOfferings = (handleSuccess, handleFailure) ->
+  describeReservedInstancesOfferingsSuccess = (data, status, jqXHR) ->
+    offerings = []
+    $(data).find('reservedInstancesOfferingsSet').children().each ->
+      offering = {}
+      offering.type = $(this).find('instanceType').text()
+      offering.az = $(this).find('availabilityZone').text()
+      offering.duration = $(this).find('duration').text()
+      offering.fixed_price = $(this).find('fixedPrice').text()
+      offering.usage_price = $(this).find('usagePrice').text()
+      offering.description = $(this).find('productDescription').text()
+      offerings.push offering
+    handleSuccess(offerings)
+
+  credentialsCallback = (accessCode, secretKey) ->
+    queryEC2 "DescribeReservedInstancesOfferings", [], accessCode, secretKey, describeReservedInstancesOfferingsSuccess, handleFailure
+  getAWSCreds credentialsCallback
+
 # Fetch AWS credentials from local storage.  If not present, prompt user
 # call callback with keys when you have them
 getAWSCreds = (callback) ->

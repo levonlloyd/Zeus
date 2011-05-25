@@ -7,6 +7,8 @@ showingElasticIPs = false
 showingSecurityGroups = false
 showingVolumes = false
 showingSnapshots = false
+showingReservations = false
+showingOfferings = false
 imagesData = []
 instancesData = []
 elasticIPData = []
@@ -300,6 +302,70 @@ showZones = (data) ->
     $("#availability-zones").jqGrid('addRowData',i+1,dataPoint) for dataPoint,i in data
   showingZones = true
 
+setupReservedInstances = () ->
+  $('#reservations').jqGrid
+    datatype: 'local'
+    height: 200
+    width: 1200
+    colNames: [
+      'Instance Type'
+      'Availability Zone'
+      'Start'
+      'Duration'
+      'Fixed Price'
+      'Usage Price'
+      'Instance Count'
+      'Description'
+      'State'
+    ]
+    colModel: [
+      {name:'type',index:'type',width:200}
+      {name:'az',index:'az',width:200}
+      {name:'start',index:'start',width:200}
+      {name:'duration',index:'duration',width:200}
+      {name:'fixed_price',index:'fixed_price',width:200}
+      {name:'usage_price',index:'usage_price',width:200}
+      {name:'count',index:'count',width:200}
+      {name:'description',index:'description',width:200}
+      {name:'state',index:'state',width:200}
+    ]
+    multiselect: false
+    caption: 'Reserved Instances'
+
+showReservations = (data) ->
+  if not showingReservations
+    $('#reservations').jqGrid('addRowData',i+1,dataPoint) for dataPoint,i in data
+  showingReservations = true
+
+setupReservedInstancesOfferings = () ->
+  $('#offerings').jqGrid
+    datatype: 'local'
+    height: 200
+    width: 1200
+    colNames: [
+      'Instance Type'
+      'AvailabilityZone'
+      'Duration'
+      'Fixed Price'
+      'Usage Price'
+      'Description'
+    ]
+    colModel: [
+      {name:'type',index:'type',width:'200'}
+      {name:'az',index:'az',width:'200'}
+      {name:'duration',index:'duration',width:'200'}
+      {name:'fixed_price',index:'fixed_price',width:'200'}
+      {name:'usage_price',index:'usage_price',width:'200'}
+      {name:'description',index:'description',width:'200'}
+    ]
+    multiselect: false
+    caption: 'Reserved Instance Offerings'
+
+showOfferings = (data) ->
+  if not showingOfferings
+    $('#offerings').jqGrid('addRowData',i+1,dataPoint) for dataPoint,i in data
+  showingOfferings = true
+
 handleFailure = () ->
   alert 'failure'
 
@@ -328,6 +394,8 @@ $(document).ready () ->
   setupVolumes()
   setupSnapshots()
   setupZones()
+  setupReservedInstances()
+  setupReservedInstancesOfferings()
 
   ###
   # Test of getting the clients ip
@@ -367,6 +435,9 @@ $(document).ready () ->
           getVolumes showVolumes, handleFailure
           getSnapshots showSnapshots, handleFailure
         when 7 then getAvailabilityZones showZones, handleFailure
+        when 8
+          describeReservedInstances showReservations, handleFailure
+          describeReservedInstancesOfferings showOfferings, handleFailure
   saveButton = 
     text: "Save"
     click: -> 
