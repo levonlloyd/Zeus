@@ -301,6 +301,19 @@ sigParamCmp = (x,y) ->
   else
     0
 
+getClientIP = (successCallback, failureCallback) ->
+  ipCallback = (data, textStatus, jqXHR) ->
+    successCallback(data.ip)
+
+  callConfig =
+    type: "GET"
+    url: "http://jsonip.appspot.com"
+    success: ipCallback
+    failure: failureCallback
+    dataType: 'jsonp'
+
+  $.ajax callConfig
+
 # Internal routine to format a date properly for the AWS signature
 formatDate = (vDate, vFormat) ->
   vDay = addZero vDate.getUTCDate()

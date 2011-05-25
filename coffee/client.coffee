@@ -397,21 +397,6 @@ $(document).ready () ->
   setupReservedInstances()
   setupReservedInstancesOfferings()
 
-  ###
-  # Test of getting the clients ip
-  ipCallback = (data, textStatus, jqXHR) ->
-    console.log(data)
-
-  callConfig =
-    type: "GET"
-    url: "http://jsonip.appspot.com/"
-    success: ipCallback
-    failure: handleFailure
-    dataType: 'jsonp'
-
-  $.ajax callConfig
-  ###
-
   request = {}
   request.min = 1
   request.max = 1
