@@ -5,6 +5,7 @@
 ###
 
 API_VERSION = "2009-11-30"
+SQS_API_VERSION = "2009-02-01"
 
 ###
 # Get information on the availability zones.  Calls success with an array of 
@@ -279,6 +280,35 @@ describeReservedInstancesOfferings = (handleSuccess, handleFailure) ->
     queryEC2 "DescribeReservedInstancesOfferings", [], accessCode, secretKey, describeReservedInstancesOfferingsSuccess, handleFailure
   getAWSCreds credentialsCallback
 
+listQueues = (handleSuccess, handleFailure) ->
+  listQueuesSuccess = (data, status, jqXHR) ->
+    queues = []
+    $(data).find('ListQueuesResult').children().each ->
+      queue = {}
+      queue.url = $(this).text()
+      m = queue.url.match(/\/([-_A-Za-z0-9]+)$/)
+      queue.name = m[1]
+      queues.push queue
+    handleSuccess(queues)
+
+  credentialsCallback = (accessCode, secretKey) ->
+    querySQS "https://sqs.us-east-1.amazonaws.com/", 'ListQueues', [], accessCode, secretKey, listQueuesSuccess, handleFailure
+  getAWSCreds credentialsCallback
+
+getQueueAttributes = (url, handleSuccess, handleFailure) ->
+  getQueueAttributesSuccess = (data, status, jqXHR) ->
+    result = {}
+    $(data).find('GetQueueAttributesResult').children().each ->
+      result[$(this).find('Name').text()] = $(this).find('Value').text()
+    handleSuccess(result)
+
+  params = []
+  params.push new Array("AttributeName", "All")
+
+  credentialsCallback = (accessCode, secretKey) ->
+    querySQS url, 'GetQueueAttributes', params, accessCode, secretKey, getQueueAttributesSuccess, handleFailure
+  getAWSCreds credentialsCallback
+
 # Fetch AWS credentials from local storage.  If not present, prompt user
 # call callback with keys when you have them
 getAWSCreds = (callback) ->
@@ -363,6 +393,40 @@ queryEC2 = (action, params, accessCode, secretKey, handleSuccess, handleFailure)
   callConfig =
     type: "POST"
     url: "https://ec2.amazonaws.com/"
+    data: queryParams
+    success: handleSuccess
+    failure: handleFailure
+
+  $.ajax callConfig
+
+querySQS = (url, action, params, accessCode, secretKey, handleSuccess, handleFailure)->
+  curTime = new Date()
+  formattedTime = formatDate curTime, "yyyy-MM-ddThh:mm:ssZ"
+  sigValues = []
+  sigValues.push new Array("Action", action)
+  sigValues.push new Array("AWSAccessKeyId", accessCode)
+  sigValues.push new Array("SignatureVersion", "1")
+  sigValues.push new Array("Version", SQS_API_VERSION)
+  sigValues.push new Array("Timestamp", formattedTime)
+
+  sigValues.push param for param in params
+
+  sigValues.sort(sigParamCmp)
+
+  sigStr = ""
+  queryParamsList = []
+  for sigValue in sigValues
+    do(sigValue) ->
+      sigStr += sigValue[0] + sigValue[1]
+      queryParamsList.push sigValue[0] + "=" + encodeURIComponent sigValue[1]
+
+  queryParams = queryParamsList.join("&")
+  sig = Crypto.util.bytesToBase64(Crypto.HMAC(Crypto.SHA1, sigStr, secretKey, {asBytes: true}));
+  queryParams += "&Signature=" + encodeURIComponent sig
+
+  callConfig =
+    type: "POST"
+    url: url
     data: queryParams
     success: handleSuccess
     failure: handleFailure

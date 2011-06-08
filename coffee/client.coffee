@@ -9,10 +9,12 @@ showingVolumes = false
 showingSnapshots = false
 showingReservations = false
 showingOfferings = false
+showingQueues = false
 imagesData = []
 instancesData = []
 elasticIPData = []
 volumeData = []
+queuesData = []
 
 setupInstances = () ->
     $('#instances').jqGrid
@@ -58,6 +60,43 @@ showInstances = (data) ->
     instancesData = data
   $("#instances-show").hide()
   showingInstances = true
+
+setupQueues = () ->
+  $('#sqs').jqGrid
+    datatype: 'local'
+    height: 300,
+    width: 500,
+    ondblClickRow: (rowid, rowIndex, colIndex, e) ->
+      showQueueDetails rowid
+    colNames: [
+      'Queue Name'
+    ]
+    colModel:[
+      {name:'name',index:'name',width:50}
+    ]
+    multiselect: false
+    caption: 'Queues'
+
+showQueues = (data) ->
+  if not showingQueues
+    $('#sqs').jqGrid('addRowData',i+1,dataPoint) for dataPoint,i in data
+    queuesData = data
+  showingQueues = true
+
+showQueueDetails = (rowId) ->
+  row = queuesData[rowId - 1]
+  displayQueueDetails = (data) ->
+    $('.sqs-reset').empty()
+    $('#sqs-timeout').append(data.VisibilityTimeout)
+    $('#sqs-count').append(data.ApproximateNumberOfMessages)
+    $('#sqs-invisible-count').append(data.ApproximateNumberOfMessagesNotVisible)
+    createdDate = new Date(parseInt(data.CreatedTimestamp) * 1000)
+    $('#sqs-creation').append(createdDate.toString())
+    modifiedDate = new Date(parseInt(data.LastModifiedTimestamp) * 1000)
+    $('#sqs-modified').append(modifiedDate.toString())
+
+  getQueueAttributes row.url, displayQueueDetails, handleFailure
+  $("#sqs-dialog").dialog 'open'
 
 showImagesDialog = (rowNum) ->
   row = imagesData[rowNum - 1]
@@ -294,7 +333,7 @@ setupZones = () ->
       {name:'regionName',index:'regionName',width:200},
       {name:'messages',index:'messages',width:200}
     ]
-    multiselect: true
+    multiselect: false
     caption: "Availability Zones"
 
 showZones = (data) ->
@@ -396,6 +435,7 @@ $(document).ready () ->
   setupZones()
   setupReservedInstances()
   setupReservedInstancesOfferings()
+  setupQueues()
 
   request = {}
   request.min = 1
@@ -423,6 +463,8 @@ $(document).ready () ->
         when 8
           describeReservedInstances showReservations, handleFailure
           describeReservedInstancesOfferings showOfferings, handleFailure
+        when 12
+          listQueues showQueues, handleFailure
   saveButton = 
     text: "Save"
     click: -> 
@@ -456,5 +498,13 @@ $(document).ready () ->
     width: 1000
     open: () ->
       $('#volume-accordion').accordion
+        autoHeight: false
+        navigation: true
+  $("#sqs-dialog").dialog
+    autoOpen: false
+    modal: true
+    width: 600
+    open: () ->
+      $("#sqs-accordion").accordion
         autoHeight: false
         navigation: true

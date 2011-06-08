@@ -40,6 +40,11 @@
     <li><a href="#tabs-7">Bundle Tasks</a></li>
     <li><a href="#tabs-8">Availability Zones</a></li>
     <li><a href="#tabs-9">Reserved Instances</a></li>
+    <li><a href="#tabs-10">Spot Instances</a></li>
+    <li><a href="#tabs-11">S3</a></li>
+    <li><a href="#tabs-12">SimpleDB</a></li>
+    <li><a href="#tabs-13">SQS</a></li>
+    <li><a href="#tabs-14">SNS</a></li>
   </ul>
   <div id="tabs-1">
     <table id="instances">
@@ -79,6 +84,22 @@
     </table>
     <table id="offerings">
     </table>
+  </div>
+  <div id="tabs-10">
+    Unimplemented
+  </div>
+  <div id="tabs-11">
+    Unimplemented
+  </div>
+  <div id="tabs-12">
+    Unimplemented
+  </div>
+  <div id="tabs-13">
+    <table id="sqs">
+    </table>
+  </div>
+  <div id="tabs-14">
+    Unimplemented
   </div>
 </div>
 
@@ -190,6 +211,39 @@
     <h3><a href="#">Snapshot Volume</a></h3>
     <div>Unimplemented</div>
     <h3><a href="#">Change State</a></h3>
+    <div>Unimplemented</div>
+  </div>
+</div>
+
+<!-- Dialog for SQS -->
+<div id="sqs-dialog">
+  <div id="sqs-accordion">
+    <h3><a href="#">Queue Attributes</a></h3>
+      <table>
+        <tr>
+          <td>Visibility Timeout</td>
+          <td id="sqs-timeout" class="sqs-reset"></td>
+        </tr>
+        <tr>
+          <td>Number of Messages</td>
+          <td id="sqs-count" class="sqs-reset"></td>
+        </tr>
+        <tr>
+          <td>Number of Invisible Messages</td>
+          <td id="sqs-invisible-count" class="sqs-reset"></td>
+        </tr>
+        <tr>
+          <td>Creation Time</td>
+          <td id="sqs-creation" class="sqs-reset"></td>
+        </tr>
+        <tr>
+          <td>Modified Time</td>
+          <td id="sqs-modified" class="sqs-reset"></td>
+        </tr>
+      </table>
+    <h3><a href="#">Send/Recieve Message</a></h3>
+    <div>Unimplemented</div>
+    <h3><a href="#">Delete Queue</a></h3>
     <div>Unimplemented</div>
   </div>
 </div>
