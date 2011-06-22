@@ -188,7 +188,13 @@
     <h3><a href="#">Create an Image</a></h3>
     <div>Unimplemented</div>
     <h3><a href="#">Change State</a></h3>
-    <div>Unimplemented</div>
+    <div>
+      <span id="toolbar" class="ui-widget-header ui-corner-all">
+        <button id="terminate-instance">Terminate</button>
+        <button id="stop-instance">Stop</button>
+        <button id="reboot-instance">Re-boot</button>
+      </span>
+    </div>
     <h3><a href="#">Bundle</a></h3>
     <div>Unimplemented</div>
     <h3><a href="#">Show Console Output</a></h3>
@@ -202,6 +208,10 @@
   </div>
 </div>
 
+<!-- Dialog to confirm termination of instances -->
+<div id="terminate-confirm" title="Terminate the instance?">
+  <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><span class="terminate-confirm-words">Hi</span></p>
+</div>
 
 <!-- Dialog for volumes -->
 <div id="volume-dialog">
@@ -328,17 +338,17 @@
     <div>Form to terminate image.  Unimplemented</div>
     <h3><a href="#">Launch Image</a></h3>
       <div class="imageRunButton">
-        <form>
+        <form id="launch-image">
           <fieldset>
             <div>
               <label for="min">Min:</label>
-              <input type="number" min="1" value="1">
+              <input type="number" min="1" value="1" id="image-instance-min">
               <label for="max">Max:</label>
-              <input type="number" min="1" value="1">
+              <input type="number" min="1" value="1" id="image-instance-max">
             </div>
             <div>
               <label for="type">Instance Type</label>
-              <select>
+              <select id="image-instance-type">
                 <option value="m1.small">m1.small</option>
                 <option value="m1.large">m1.larg</option>
                 <option value="m1.xlarge">m1.xlarge</option>
@@ -354,7 +364,7 @@
             </div>
             <div>
               <label for="az">Availability Zone</label>
-              <select>
+              <select id="image-instance-zone">
                 <option value="us-east-1a">US-East-1a</option>
                 <option value="us-east-1b">US-East-1b</option>
                 <option value="us-east-1c">US-East-1c</option>

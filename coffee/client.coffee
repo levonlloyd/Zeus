@@ -137,6 +137,26 @@ showInstancesDialog = (rowNum) ->
   $('#instanced-rootDevice').append(row.rootDeviceType)
   $('#instanced-secGroup').append(row.secGroup)
   $('#instanced-tags').append(row.tags.join(','))
+  $('#terminate-instance').unbind('click');
+  $('#terminate-instance').button().click () ->
+    # Should add a confirmation dialog
+    cancelButton =
+      text: "Cancel"
+      click: ->
+        $(this).dialog("close")
+    terminateButton = 
+      text: "Terminate"
+      click: ->
+        terminateInstances new Array(row.instanceId), alert, handleFailure
+        $(this).dialog("close")
+    buttons = [terminateButton, cancelButton]
+    $('#terminate-confirm').dialog "option", "buttons", buttons
+    $('.terminate-confirm-words').empty()
+    message = "Are you sure you want to terminate " + row.instanceId + "?"
+    $('.terminate-confirm-words').append(message)
+    $('#terminate-confirm').dialog 'open'
+  $('#stop-instance').button()
+  $('#reboot-instance').button()
 
   consoleOutputHandler = (content) ->
     $('#instanced-co').empty().append("<textarea cols=\"100\" rows=\"20\">" + content + "</textarea>")
@@ -425,6 +445,9 @@ $(document).ready () ->
   $("#images-show").hide()
   $("input:submit", ".imageTagButton").button()
   $("input:submit", ".imageRunButton").button()
+  $("#launch-image").submit ->
+    console.log $("#image-instance-min").val()
+    false
   setupInstances()
   setupImages()
   setupKeyPairs()
@@ -444,6 +467,8 @@ $(document).ready () ->
   request.type = 'm1.large'
   request.sec_groups = ['GENSENT_freedonia_EBS']
   #runInstances request, alert, handleFailure
+
+  #terminateInstances ["i-03174e6d"], alert, handleFailure
 
   $("#tabs").tabs
     selected: 0
@@ -465,10 +490,12 @@ $(document).ready () ->
           describeReservedInstancesOfferings showOfferings, handleFailure
         when 12
           listQueues showQueues, handleFailure
+
   saveButton = 
     text: "Save"
     click: -> 
       alert "Clicked"
+
   $("#credentials-dialog").dialog 
     autoOpen: false
     modal: true
@@ -477,6 +504,12 @@ $(document).ready () ->
     close: () ->
       $('#access').val ""
       $('#secret').val ""
+
+  $('#terminate-confirm').dialog
+    autoOpen: false
+    resizable: false
+    height:140
+    modal: true
 
   $("#image-dialog").dialog
     autoOpen: false
