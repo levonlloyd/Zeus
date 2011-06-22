@@ -192,6 +192,7 @@
       <span id="toolbar" class="ui-widget-header ui-corner-all">
         <button id="terminate-instance">Terminate</button>
         <button id="stop-instance">Stop</button>
+        <button id="start-instance">Start</button>
         <button id="reboot-instance">Re-boot</button>
       </span>
     </div>
@@ -209,8 +210,8 @@
 </div>
 
 <!-- Dialog to confirm termination of instances -->
-<div id="terminate-confirm" title="Terminate the instance?">
-  <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><span class="terminate-confirm-words">Hi</span></p>
+<div id="state-confirm" title="Change the instance state?">
+  <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><span class="state-confirm-words"></span></p>
 </div>
 
 <!-- Dialog for volumes -->

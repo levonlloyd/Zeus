@@ -139,7 +139,6 @@ showInstancesDialog = (rowNum) ->
   $('#instanced-tags').append(row.tags.join(','))
   $('#terminate-instance').unbind('click');
   $('#terminate-instance').button().click () ->
-    # Should add a confirmation dialog
     cancelButton =
       text: "Cancel"
       click: ->
@@ -150,13 +149,71 @@ showInstancesDialog = (rowNum) ->
         terminateInstances new Array(row.instanceId), alert, handleFailure
         $(this).dialog("close")
     buttons = [terminateButton, cancelButton]
-    $('#terminate-confirm').dialog "option", "buttons", buttons
-    $('.terminate-confirm-words').empty()
+    $('#state-confirm').dialog "option", "buttons", buttons
+    $('.state-confirm-words').empty()
     message = "Are you sure you want to terminate " + row.instanceId + "?"
-    $('.terminate-confirm-words').append(message)
-    $('#terminate-confirm').dialog 'open'
-  $('#stop-instance').button()
+    $('.state-confirm-words').append(message)
+    $('#state-confirm').dialog 'open'
+  $('#stop-instance').button
+    disabled: false
+  $('#stop-instance').unbind('click');
+  $('#stop-instance').button().click () ->
+    cancelButton =
+      text: "Cancel"
+      click: ->
+        $(this).dialog("close")
+    stopButton = 
+      text: "Stop"
+      click: ->
+        stopInstances new Array(row.instanceId), alert, handleFailure
+        $(this).dialog("close")
+    buttons = [stopButton, cancelButton]
+    $('#state-confirm').dialog "option", "buttons", buttons
+    $('.state-confirm-words').empty()
+    message = "Are you sure you want to stop " + row.instanceId + "?"
+    $('.state-confirm-words').append(message)
+    $('#state-confirm').dialog 'open'
+  $('#start-instance').button
+    disabled: false
+  $('#start-instance').unbind('click');
+  $('#start-instance').button().click () ->
+    cancelButton =
+      text: "Cancel"
+      click: ->
+        $(this).dialog("close")
+    startButton = 
+      text: "Start"
+      click: ->
+        startInstances new Array(row.instanceId), alert, handleFailure
+        $(this).dialog("close")
+    buttons = [startButton, cancelButton]
+    $('#state-confirm').dialog "option", "buttons", buttons
+    $('.state-confirm-words').empty()
+    message = "Are you sure you want to start " + row.instanceId + "?"
+    $('.state-confirm-words').append(message)
+    $('#state-confirm').dialog 'open'
+  if row.rootDeviceType is 'instance-store' or row.state is 'stopped' or row.state is 'terminated'
+    $('#stop-instance').button("option" , "disabled", true)
+  unless row.state is 'stopped'
+    $('#start-instance').button("option" , "disabled", true)
   $('#reboot-instance').button()
+  $('#reboot-instance').unbind('click');
+  $('#reboot-instance').button().click () ->
+    cancelButton =
+      text: "Cancel"
+      click: ->
+        $(this).dialog("close")
+    rebootButton = 
+      text: "Reboot"
+      click: ->
+        rebootInstances new Array(row.instanceId), alert, handleFailure
+        $(this).dialog("close")
+    buttons = [rebootButton, cancelButton]
+    $('#state-confirm').dialog "option", "buttons", buttons
+    $('.state-confirm-words').empty()
+    message = "Are you sure you want to reboot " + row.instanceId + "?"
+    $('.state-confirm-words').append(message)
+    $('#state-confirm').dialog 'open'
 
   consoleOutputHandler = (content) ->
     $('#instanced-co').empty().append("<textarea cols=\"100\" rows=\"20\">" + content + "</textarea>")
@@ -468,7 +525,6 @@ $(document).ready () ->
   request.sec_groups = ['GENSENT_freedonia_EBS']
   #runInstances request, alert, handleFailure
 
-  #terminateInstances ["i-03174e6d"], alert, handleFailure
 
   $("#tabs").tabs
     selected: 0
@@ -505,7 +561,7 @@ $(document).ready () ->
       $('#access').val ""
       $('#secret').val ""
 
-  $('#terminate-confirm').dialog
+  $('#state-confirm').dialog
     autoOpen: false
     resizable: false
     height:140

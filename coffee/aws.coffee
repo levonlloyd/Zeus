@@ -254,6 +254,49 @@ terminateInstances = (instances, handleSuccess, handleFailure) ->
     queryEC2 "TerminateInstances", params, accessCode, secretKey, terminateInstancesSuccess, handleFailure
   getAWSCreds credentialsCallback
 
+rebootInstances = (instances, handleSuccess, handleFailure) ->
+  rebootInstancesSuccess = (data, status, jqXHR) ->
+    console.log(data)
+
+  params = []
+  for id, i in instances
+    index = i + 1
+    params.push new Array("InstanceId." + index, id)
+
+  credentialsCallback = (accessCode, secretKey) ->
+    queryEC2 "RebootInstances", params, accessCode, secretKey, rebootInstancesSuccess, handleFailure
+  getAWSCreds credentialsCallback
+
+stopInstances = (instances, handleSuccess, handleFailure, force=false) ->
+  stopInstancesSuccess = (data, status, jqXHR) ->
+    console.log(data)
+
+  params = []
+  for id, i in instances
+    index = i + 1
+    params.push new Array("InstanceId." + index, id)
+
+  if force
+    params.push new Array("Force", "True")
+
+  credentialsCallback = (accessCode, secretKey) ->
+    queryEC2 "StopInstances", params, accessCode, secretKey, stopInstancesSuccess, handleFailure
+  getAWSCreds credentialsCallback
+
+startInstances = (instances, handleSuccess, handleFailure) ->
+  startInstancesSuccess = (data, status, jqXHR) ->
+    console.log(data)
+
+  params = []
+  for id, i in instances
+    index = i + 1
+    params.push new Array("InstanceId." + index, id)
+
+  credentialsCallback = (accessCode, secretKey) ->
+    queryEC2 "StartInstances", params, accessCode, secretKey, startInstancesSuccess, handleFailure
+  getAWSCreds credentialsCallback
+
+
 describeReservedInstances = (handleSuccess, handleFailure) ->
   describeReservedInstancesSuccess = (data, status, jqXHR) ->
     reservedInstances = []
